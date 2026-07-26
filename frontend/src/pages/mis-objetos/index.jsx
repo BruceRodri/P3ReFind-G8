@@ -1,0 +1,1 @@
+export { MisObjetosPage } from "./mis-objetos";

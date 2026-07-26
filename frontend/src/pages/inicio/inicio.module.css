@@ -1,0 +1,20 @@
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+}
+
+.categorias {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
