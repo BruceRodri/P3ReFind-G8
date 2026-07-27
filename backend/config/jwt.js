@@ -1,3 +1,4 @@
+//Codigo para generar el token de autenticación
 const jwt = require("jsonwebtoken");
 
 const generToken = (usuario) => {
