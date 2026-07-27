@@ -2,30 +2,86 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 80vh;
+  min-height: calc(100vh - 80px);
+  padding: 3rem 1rem;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(124, 58, 237, .12), transparent 30%),
+    radial-gradient(circle at 85% 80%, rgba(79, 70, 229, .10), transparent 28%),
+    #f8fafc;
 }
 
 .card {
   width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  max-width: 430px;
+  border: 1px solid rgba(226, 232, 240, .9);
+  border-radius: 22px;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, .10);
+  overflow: hidden;
+}
+
+.cardBody { padding: 2.3rem; }
+.logoWrapper { display: flex; justify-content: center; margin-bottom: 1rem; }
+.logo {
+  width: 58px;
+  height: 58px;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 8px 18px rgba(79, 70, 229, .18);
 }
 
 .title {
+  margin-bottom: .35rem;
   text-align: center;
-  margin-bottom: 20px;
-  font-weight: bold;
+  color: #111827;
+  font-size: 1.75rem;
+  font-weight: 800;
+}
+
+.subtitle {
+  margin-bottom: 1.75rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.label { color: #334155; font-size: .9rem; font-weight: 600; }
+.input {
+  min-height: 48px;
+  border: 1px solid #dbe2ea;
+  border-radius: 11px;
+  padding: .7rem .9rem;
+  background-color: #f8fafc;
+  transition: border-color .2s, box-shadow .2s, background-color .2s;
+}
+
+.input:focus {
+  border-color: #6366f1;
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, .12);
 }
 
 .button {
   width: 100%;
-  padding: 10px;
-  border-radius: 10px;
+  min-height: 48px;
+  margin-top: .35rem;
+  border: 0;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  font-weight: 700;
+  box-shadow: 0 8px 18px rgba(79, 70, 229, .22);
+  transition: transform .2s, box-shadow .2s;
 }
 
-.link {
-  text-align: center;
-  margin-top: 15px;
+.button:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #6d28d9, #4338ca);
+  box-shadow: 0 10px 22px rgba(79, 70, 229, .28);
+}
+
+.link { margin: 1.5rem 0 0; text-align: center; color: #64748b; font-size: .93rem; }
+.link a { color: #4f46e5; font-weight: 700; text-decoration: none; }
+.link a:hover { text-decoration: underline; }
+
+@media (max-width: 480px) {
+  .container { padding: 1.5rem .8rem; }
+  .cardBody { padding: 1.7rem 1.3rem; }
 }

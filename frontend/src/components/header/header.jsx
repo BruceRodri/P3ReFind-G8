@@ -17,7 +17,10 @@ export const Header = () => {
     return (
         <Navbar bg="dark" variant="dark" expand="lg" className={styles.navbar}>
             <Container>
-                <Navbar.Brand as={Link} to="/" className={styles.brand}>ReFind</Navbar.Brand>
+                <Navbar.Brand as={Link} to="/" className={styles.brand}>
+                    <img src="/favicon-128x128.jpeg" alt="Logo de ReFind" className={styles.logo}/>
+                    <span>ReFind</span>
+                </Navbar.Brand>
                 <Navbar.Toggle aria-controls="main-navigation" />
                 <Navbar.Collapse id="main-navigation">
                     <Nav className="me-auto">

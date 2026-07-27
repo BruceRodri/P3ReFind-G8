@@ -1,43 +1,60 @@
 import { useState, useEffect } from "react";
 import { Container, Row, Col, Button, Modal, Form } from "react-bootstrap";
-import { getMisObjetos, crearObjeto, eliminarObjeto } from "../../services/objetos_services";
+import EditIcon from "@mui/icons-material/Edit";
+import {
+    getMisObjetos,
+    crearObjeto,
+    actualizarObjeto,
+    eliminarObjeto,
+} from "../../services/objetos_services";
 import { getCategorias } from "../../services/categorias_services";
 import { subirImagen } from "../../services/upload_services";
 import { LostCard, FoundCard } from "../../components";
 import styles from "./mis-objetos.module.css";
 
+const objetoVacio = {
+    titulo: "",
+    descripcion: "",
+    estado: "perdido",
+    ubicacion: "",
+    imagen: "",
+    id_categoria: "",
+};
+
 export const MisObjetosPage = () => {
     const [objetos, setObjetos] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const [objetoEditando, setObjetoEditando] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
     const [subiendo, setSubiendo] = useState(false);
-    const [nuevoObjeto, setNuevoObjeto] = useState({
-        titulo: "",
-        descripcion: "",
-        estado: "perdido",
-        ubicacion: "",
-        imagen: "",
-        id_categoria: "",
-    });
+    const [guardando, setGuardando] = useState(false);
+    const [nuevoObjeto, setNuevoObjeto] = useState(objetoVacio);
 
-    useEffect(() => {
-        cargarDatos();
-    }, []);
-
-    const cargarDatos = async () => {
+    async function cargarDatos() {
         const [objData, catData] = await Promise.all([getMisObjetos(), getCategorias()]);
         setObjetos(objData);
         setCategorias(catData);
-    };
+    }
 
-    const handleFileChange = async (e) => {
+    useEffect(() => {
+        Promise.all([getMisObjetos(), getCategorias()]).then(([objData, catData]) => {
+            setObjetos(objData);
+            setCategorias(catData);
+        });
+    }, []);
+
+    const handleFileChange = async (e, esEdicion = false) => {
         const file = e.target.files[0];
         if (!file) return;
         setSubiendo(true);
         try {
             const data = await subirImagen(file);
-            setNuevoObjeto((prev) => ({ ...prev, imagen: data.url }));
+            if (esEdicion) {
+                setObjetoEditando((prev) => ({ ...prev, imagen: data.url }));
+            } else {
+                setNuevoObjeto((prev) => ({ ...prev, imagen: data.url }));
+            }
         } catch (error) {
             console.error("Error al subir imagen:", error);
         } finally {
@@ -47,17 +64,40 @@ export const MisObjetosPage = () => {
 
     const handleCrear = async (e) => {
         e.preventDefault();
-        await crearObjeto(nuevoObjeto);
-        setShowModal(false);
-        setNuevoObjeto({
-            titulo: "",
-            descripcion: "",
-            estado: "perdido",
-            ubicacion: "",
-            imagen: "",
-            id_categoria: "",
+        setGuardando(true);
+        try {
+            await crearObjeto(nuevoObjeto);
+            setShowModal(false);
+            setNuevoObjeto(objetoVacio);
+            await cargarDatos();
+        } finally {
+            setGuardando(false);
+        }
+    };
+
+    const abrirEdicion = (objeto) => {
+        setObjetoEditando({
+            id: objeto.id,
+            titulo: objeto.titulo || "",
+            descripcion: objeto.descripcion || "",
+            estado: objeto.estado || "perdido",
+            ubicacion: objeto.ubicacion || "",
+            imagen: objeto.imagen || "",
+            id_categoria: objeto.id_categoria || "",
         });
-        cargarDatos();
+    };
+
+    const handleActualizar = async (e) => {
+        e.preventDefault();
+        setGuardando(true);
+        try {
+            const { id, ...datos } = objetoEditando;
+            await actualizarObjeto(id, datos);
+            setObjetoEditando(null);
+            await cargarDatos();
+        } finally {
+            setGuardando(false);
+        }
     };
 
     const handleEliminar = async () => {
@@ -75,15 +115,26 @@ export const MisObjetosPage = () => {
 
             <Row>
                 {objetos.map((obj) => (
-                    <Col key={obj.id} md={4} sm={6} xs={12}>
+                    <Col key={obj.id} md={4} sm={6} xs={12} className="mb-4">
                         {obj.estado === "perdido" ? (
                             <LostCard objeto={obj} onVerDetalle={() => { }} onEncontrado={cargarDatos} />
                         ) : (
                             <FoundCard objeto={obj} onVerDetalle={() => { }} />
                         )}
-                        <Button variant="danger" size="sm" onClick={() => setShowDeleteConfirm(obj.id)}>
-                            Eliminar
-                        </Button>
+                        <div className={styles.actions}>
+                            <Button
+                                variant="outline-primary"
+                                size="sm"
+                                className={styles.editButton}
+                                onClick={() => abrirEdicion(obj)}
+                            >
+                                <EditIcon fontSize="small" />
+                                Editar
+                            </Button>
+                            <Button variant="outline-danger" size="sm" onClick={() => setShowDeleteConfirm(obj.id)}>
+                                Eliminar
+                            </Button>
+                        </div>
                     </Col>
                 ))}
             </Row>
@@ -107,6 +158,7 @@ export const MisObjetosPage = () => {
                             <Form.Label>Descripción</Form.Label>
                             <Form.Control
                                 as="textarea"
+                                rows={3}
                                 value={nuevoObjeto.descripcion}
                                 onChange={(e) => setNuevoObjeto({ ...nuevoObjeto, descripcion: e.target.value })}
                             />
@@ -121,15 +173,9 @@ export const MisObjetosPage = () => {
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Imagen</Form.Label>
-                            <Form.Control
-                                type="file"
-                                accept="image/*"
-                                onChange={handleFileChange}
-                            />
+                            <Form.Control type="file" accept="image/*" onChange={handleFileChange} />
                             {nuevoObjeto.imagen && (
-                                <div className="mt-2">
-                                    <img src={nuevoObjeto.imagen} alt="Preview" style={{ maxHeight: 100 }} />
-                                </div>
+                                <img src={nuevoObjeto.imagen} alt="Vista previa" className={styles.preview} />
                             )}
                         </Form.Group>
                         <Form.Group className="mb-3">
@@ -141,16 +187,94 @@ export const MisObjetosPage = () => {
                             >
                                 <option value="">Selecciona una categoría</option>
                                 {categorias.map((cat) => (
-                                    <option key={cat.id} value={cat.id}>
-                                        {cat.nombre}
-                                    </option>
+                                    <option key={cat.id} value={cat.id}>{cat.nombre}</option>
                                 ))}
                             </Form.Select>
                         </Form.Group>
-                        <Button variant="primary" type="submit" disabled={subiendo}>
-                            {subiendo ? "Subiendo imagen..." : "Crear Objeto"}
+                        <Button variant="primary" type="submit" disabled={subiendo || guardando}>
+                            {subiendo ? "Subiendo imagen..." : guardando ? "Creando..." : "Crear Objeto"}
                         </Button>
                     </Form>
+                </Modal.Body>
+            </Modal>
+
+            <Modal show={!!objetoEditando} onHide={() => setObjetoEditando(null)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Editar objeto</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {objetoEditando && (
+                        <Form onSubmit={handleActualizar}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Título</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    value={objetoEditando.titulo}
+                                    onChange={(e) => setObjetoEditando({ ...objetoEditando, titulo: e.target.value })}
+                                    required
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Descripción</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    rows={4}
+                                    value={objetoEditando.descripcion}
+                                    onChange={(e) => setObjetoEditando({ ...objetoEditando, descripcion: e.target.value })}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Ubicación</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    value={objetoEditando.ubicacion}
+                                    onChange={(e) => setObjetoEditando({ ...objetoEditando, ubicacion: e.target.value })}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Estado</Form.Label>
+                                <Form.Select
+                                    value={objetoEditando.estado}
+                                    onChange={(e) => setObjetoEditando({ ...objetoEditando, estado: e.target.value })}
+                                >
+                                    <option value="perdido">Perdido</option>
+                                    <option value="encontrado">Encontrado</option>
+                                </Form.Select>
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Categoría</Form.Label>
+                                <Form.Select
+                                    value={objetoEditando.id_categoria}
+                                    onChange={(e) => setObjetoEditando({ ...objetoEditando, id_categoria: e.target.value })}
+                                    required
+                                >
+                                    <option value="">Selecciona una categoría</option>
+                                    {categorias.map((cat) => (
+                                        <option key={cat.id} value={cat.id}>{cat.nombre}</option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Cambiar imagen</Form.Label>
+                                <Form.Control
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => handleFileChange(e, true)}
+                                />
+                                {objetoEditando.imagen && (
+                                    <img src={objetoEditando.imagen} alt="Vista previa" className={styles.preview} />
+                                )}
+                            </Form.Group>
+                            <div className={styles.modalActions}>
+                                <Button variant="secondary" onClick={() => setObjetoEditando(null)}>
+                                    Cancelar
+                                </Button>
+                                <Button type="submit" disabled={subiendo || guardando}>
+                                    {subiendo ? "Subiendo imagen..." : guardando ? "Guardando..." : "Guardar cambios"}
+                                </Button>
+                            </div>
+                        </Form>
+                    )}
                 </Modal.Body>
             </Modal>
 

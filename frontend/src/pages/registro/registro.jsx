@@ -33,40 +33,50 @@ export const RegistroPage = () => {
     };
 
     return (
-        <Container className={styles.container}>
+        <Container fluid className={styles.container}>
             <Card className={styles.card}>
-                <Card.Body>
-                    <h2 className={styles.title}>Registrarse</h2>
+                <Card.Body className={styles.cardBody}>
+                    <div className={styles.logoWrapper}>
+                        <img src="/favicon-128x128.jpeg" alt="ReFind" className={styles.logo} />
+                    </div>
+                    <h2 className={styles.title}>Crear una cuenta</h2>
+                    <p className={styles.subtitle}>Únete a ReFind y ayuda a conectar objetos perdidos con sus dueños</p>
                     {error && <Alert variant="danger">{error}</Alert>}
                     <Form onSubmit={handleSubmit}>
                         <Form.Group className="mb-3">
-                            <Form.Label>Nombre</Form.Label>
+                            <Form.Label className={styles.label}>Nombre</Form.Label>
                             <Form.Control
+                                className={styles.input}
                                 type="text"
                                 placeholder="Tu nombre"
                                 value={nombre}
                                 onChange={(e) => setNombre(e.target.value)}
+                                autoComplete="name"
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Correo Electrónico</Form.Label>
+                            <Form.Label className={styles.label}>Correo electrónico</Form.Label>
                             <Form.Control
+                                className={styles.input}
                                 type="email"
                                 placeholder="correo@ejemplo.com"
                                 value={correo}
                                 onChange={(e) => setCorreo(e.target.value)}
+                                autoComplete="email"
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Contraseña</Form.Label>
+                            <Form.Label className={styles.label}>Contraseña</Form.Label>
                             <Form.Control
+                                className={styles.input}
                                 type="password"
                                 placeholder="Tu contraseña"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                autoComplete="new-password"
                             />
                         </Form.Group>
-                        <Button variant="success" type="submit" disabled={loading} className={styles.button}>
+                        <Button type="submit" disabled={loading} className={styles.button}>
                             {loading ? "Registrando..." : "Registrarse"}
                         </Button>
                     </Form>
