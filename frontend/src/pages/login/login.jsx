@@ -24,6 +24,7 @@ export const LoginPage = () => {
         try {
             const data = await login(correo, password);
             localStorage.setItem("token", data.token);
+            localStorage.setItem("usuario", JSON.stringify(data.usuario));
             navigate("/");
         } catch (err) {
             setError("Credenciales incorrectas", err);
