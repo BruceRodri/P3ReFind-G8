@@ -9,7 +9,7 @@ export const MensajesPage = () => {
   const [historial, setHistorial] = useState([]);
   const [mensaje, setMensaje] = useState("");
   const [cargandoHistorial, setCargandoHistorial] = useState(false);
-  const chatEndRef = useRef(null);
+  const chatBodyRef = useRef(null);
   const usuario = JSON.parse(localStorage.getItem("usuario") || "{}");
 
   useEffect(() => {
@@ -27,7 +27,9 @@ export const MensajesPage = () => {
   }, [contacto]);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatBodyRef.current) {
+      chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+    }
   }, [historial]);
 
   const handleEnviar = async (e) => {
@@ -80,11 +82,11 @@ export const MensajesPage = () => {
                   <strong>{contacto.contacto_nombre}</strong>
                   <small className="text-muted ms-2">- {contacto.objeto_titulo}</small>
                 </Card.Header>
-                <Card.Body className={styles.chatBody}>
+                <Card.Body className={styles.chatBody} ref={chatBodyRef}>
                   {cargandoHistorial ? (
                     <div className="text-center py-4"><Spinner animation="border" size="sm" /></div>
                   ) : historial.length === 0 ? (
-                    <p className="text-muted text-center py-4">No hay mensajes aún. Escribe el primero.</p>
+                    <p className="text-muted text-center py-4">No hay mensajes aun. Escribe el primero.</p>
                   ) : (
                     historial.map((msg) => (
                       <div
@@ -100,7 +102,6 @@ export const MensajesPage = () => {
                       </div>
                     ))
                   )}
-                  <div ref={chatEndRef} />
                 </Card.Body>
                 <Card.Footer>
                   <Form onSubmit={handleEnviar} className="d-flex gap-2">

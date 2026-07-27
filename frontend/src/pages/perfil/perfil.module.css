@@ -1,50 +1,64 @@
 .container {
   padding: 2rem 0;
   min-height: 60vh;
+  animation: fadeIn 0.4s ease;
 }
 .back {
   display: inline-block;
   margin-bottom: 1rem;
-  color: #6c757d;
+  color: var(--gray-500);
   text-decoration: none;
+  font-size: 0.9rem;
+  transition: color var(--transition-fast);
 }
 .back:hover {
-  color: #0d6efd;
+  color: var(--purple-600);
 }
 .card {
   max-width: 500px;
   margin: 0 auto;
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 2.5rem 2rem;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--gray-200);
+  text-align: center;
+  animation: fadeInUp 0.5s ease;
 }
 .avatar {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: #0d6efd;
+  background: linear-gradient(135deg, var(--purple-600), #4f46e5);
   color: #fff;
   font-size: 2rem;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1rem;
+  transition: transform var(--transition-normal);
+}
+.avatar:hover {
+  transform: scale(1.05);
 }
 .name {
   font-size: 1.5rem;
+  font-weight: 800;
   margin-bottom: 0.25rem;
+  color: var(--gray-900);
 }
 .email {
-  color: #6c757d;
-  margin-bottom: 0.5rem;
+  color: var(--gray-500);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
 }
 .statNumber {
   font-size: 1.8rem;
-  font-weight: bold;
-  color: #0d6efd;
+  font-weight: 800;
+  color: var(--purple-600);
   margin-bottom: 0;
 }
 .statLabel {
-  color: #6c757d;
+  color: var(--gray-500);
   font-size: 0.85rem;
 }

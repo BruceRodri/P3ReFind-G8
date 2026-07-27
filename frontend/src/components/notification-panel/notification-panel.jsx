@@ -15,6 +15,16 @@ export const NotificationPanel = () => {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setShow(false);
+      }
+    };
+    if (show) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [show]);
+
   const cargarNoLeidas = async () => {
     try {
       const data = await getNoLeidas();
@@ -51,7 +61,9 @@ export const NotificationPanel = () => {
   return (
     <div className={styles.container} ref={ref}>
       <Nav.Link className={styles.bell} onClick={togglePanel}>
-        Notif
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+        </svg>
         {noLeidas > 0 && (
           <Badge bg="danger" pill className={styles.badge}>{noLeidas}</Badge>
         )}
@@ -62,7 +74,7 @@ export const NotificationPanel = () => {
             <strong>Notificaciones</strong>
             {noLeidas > 0 && (
               <Button variant="link" size="sm" onClick={handleLeerTodas}>
-                Marcar todas como leídas
+                Marcar todas como leidas
               </Button>
             )}
           </div>

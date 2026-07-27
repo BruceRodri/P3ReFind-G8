@@ -1,10 +1,41 @@
 .footer {
-  background-color: #343a40;
-  color: white;
-  padding: 20px 0;
+  background: var(--gray-900);
+  color: var(--gray-400);
+  padding: 2.5rem 0;
+  margin-top: 4rem;
+}
+
+.footerInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
   text-align: center;
 }
 
-.footer p {
+.footerBrand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.footerBrand img {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+}
+
+.footerText {
+  color: var(--gray-500);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.footerBottom {
+  font-size: 0.8rem;
+  color: var(--gray-600);
   margin: 0;
 }

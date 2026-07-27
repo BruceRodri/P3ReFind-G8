@@ -50,15 +50,6 @@ CREATE TABLE comentarios(
     CONSTRAINT fk_usuario_com FOREIGN KEY(id_usuario) REFERENCES usuarios(id)
 );
 
-CREATE TABLE favoritos(
-    id SERIAL PRIMARY KEY,
-    id_usuario INTEGER,
-    id_objeto INTEGER,
-    CONSTRAINT fk_usuario_fav FOREIGN KEY(id_usuario) REFERENCES usuarios(id),
-    CONSTRAINT fk_objeto_fav FOREIGN KEY(id_objeto) REFERENCES objetos(id),
-    UNIQUE(id_usuario, id_objeto)
-);
-
 CREATE TABLE mensajes(
     id SERIAL PRIMARY KEY,
     id_remitente INTEGER NOT NULL,

@@ -9,6 +9,7 @@ import {
   MensajesPage,
   AdminPage,
   PerfilPage,
+  NotFoundPage,
 } from "./pages";
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/mensajes" element={<privateRoutes><MensajesPage /></privateRoutes>} />
                 <Route path="/admin" element={<privateRoutes><AdminPage /></privateRoutes>} />
                 <Route path="/perfil/:id" element={<PerfilPage />} />
+                <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Layout>
           }

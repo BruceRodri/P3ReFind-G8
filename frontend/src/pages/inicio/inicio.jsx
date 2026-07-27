@@ -182,7 +182,7 @@ export const InicioPage = () => {
                     <div className={styles.filters}>
                         <div className={styles.categorias}>
                             <button className={`${styles.allCategory} ${!filtroCategoria ? styles.active : ""}`} onClick={() => setFiltroCategoria(null)}>Todos</button>
-                            {categorias.map((cat) => <CategoryCard key={cat.id} categoria={cat} onSeleccionar={setFiltroCategoria} />)}
+                            {categorias.filter((cat) => cat.nombre !== "Otros").map((cat) => <CategoryCard key={cat.id} categoria={cat} onSeleccionar={setFiltroCategoria} />)}
                         </div>
                         <div className={styles.filterRow}>
                             <Form.Select

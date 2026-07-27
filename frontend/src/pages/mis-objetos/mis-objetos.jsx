@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Button, Modal, Form } from "react-bootstrap";
+import { Container, Row, Col, Button, Modal, Form, Spinner } from "react-bootstrap";
 import EditIcon from "@mui/icons-material/Edit";
 import {
     getMisObjetos,
@@ -24,6 +24,7 @@ const objetoVacio = {
 export const MisObjetosPage = () => {
     const [objetos, setObjetos] = useState([]);
     const [categorias, setCategorias] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [objetoEditando, setObjetoEditando] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
@@ -32,16 +33,17 @@ export const MisObjetosPage = () => {
     const [nuevoObjeto, setNuevoObjeto] = useState(objetoVacio);
 
     async function cargarDatos() {
-        const [objData, catData] = await Promise.all([getMisObjetos(), getCategorias()]);
-        setObjetos(objData);
-        setCategorias(catData);
+        const [objData, catData] = await Promise.allSettled([getMisObjetos(), getCategorias()]);
+        if (objData.status === "fulfilled") setObjetos(objData.value);
+        if (catData.status === "fulfilled") setCategorias(catData.value);
     }
 
     useEffect(() => {
-        Promise.all([getMisObjetos(), getCategorias()]).then(([objData, catData]) => {
-            setObjetos(objData);
-            setCategorias(catData);
-        });
+        setLoading(true);
+        Promise.allSettled([getMisObjetos(), getCategorias()]).then(([objResult, catResult]) => {
+            if (objResult.status === "fulfilled") setObjetos(objResult.value);
+            if (catResult.status === "fulfilled") setCategorias(catResult.value);
+        }).finally(() => setLoading(false));
     }, []);
 
     const handleFileChange = async (e, esEdicion = false) => {
@@ -109,35 +111,48 @@ export const MisObjetosPage = () => {
     return (
         <Container>
             <h1 className={styles.title}>Mis Objetos</h1>
+            <p className={styles.subtitle}>Gestiona todos los objetos que has publicado.</p>
             <Button variant="success" className={styles.addButton} onClick={() => setShowModal(true)}>
                 + Nuevo Objeto
             </Button>
 
-            <Row>
-                {objetos.map((obj) => (
-                    <Col key={obj.id} md={4} sm={6} xs={12} className="mb-4">
-                        {obj.estado === "perdido" ? (
-                            <LostCard objeto={obj} onVerDetalle={() => { }} onEncontrado={cargarDatos} />
-                        ) : (
-                            <FoundCard objeto={obj} onVerDetalle={() => { }} />
-                        )}
-                        <div className={styles.actions}>
-                            <Button
-                                variant="outline-primary"
-                                size="sm"
-                                className={styles.editButton}
-                                onClick={() => abrirEdicion(obj)}
-                            >
-                                <EditIcon fontSize="small" />
-                                Editar
-                            </Button>
-                            <Button variant="outline-danger" size="sm" onClick={() => setShowDeleteConfirm(obj.id)}>
-                                Eliminar
-                            </Button>
-                        </div>
-                    </Col>
-                ))}
-            </Row>
+            {loading ? (
+                <div className={styles.spinner}>
+                    <Spinner animation="border" />
+                </div>
+            ) : objetos.length === 0 ? (
+                <div className={styles.empty}>
+                    <span className={styles.emptyIcon}>&#128269;</span>
+                    <h3>Aun no tienes objetos publicados</h3>
+                    <p>Comienza publicando un objeto perdido o encontrado para que la comunidad te ayude.</p>
+                </div>
+            ) : (
+                <Row>
+                    {objetos.map((obj) => (
+                        <Col key={obj.id} md={4} sm={6} xs={12} className="mb-4">
+                            {obj.estado === "perdido" ? (
+                                <LostCard objeto={obj} onEncontrado={cargarDatos} />
+                            ) : (
+                                <FoundCard objeto={obj} />
+                            )}
+                            <div className={styles.actions}>
+                                <Button
+                                    variant="outline-primary"
+                                    size="sm"
+                                    className={styles.editButton}
+                                    onClick={() => abrirEdicion(obj)}
+                                >
+                                    <EditIcon fontSize="small" />
+                                    Editar
+                                </Button>
+                                <Button variant="outline-danger" size="sm" onClick={() => setShowDeleteConfirm(obj.id)}>
+                                    Eliminar
+                                </Button>
+                            </div>
+                        </Col>
+                    ))}
+                </Row>
+            )}
 
             <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton>
