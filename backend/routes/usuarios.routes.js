@@ -17,6 +17,36 @@ router.get("/", autenticacion, autorizacion("ADMIN"), async (req, res) => {
   }
 });
 
+// PERFIL PÚBLICO
+router.get("/perfil/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const usuario = await conexion.query(
+      "SELECT u.id, u.nombre, u.correo, r.nombre as rol FROM usuarios u INNER JOIN roles r ON u.id_rol = r.id WHERE u.id = $1 AND u.activo = TRUE",
+      [id],
+    );
+    if (usuario.rows.length === 0) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+    const totalObjetos = await conexion.query(
+      "SELECT COUNT(*) FROM objetos WHERE id_usuario = $1 AND activo = TRUE",
+      [id],
+    );
+    const encontrados = await conexion.query(
+      "SELECT COUNT(*) FROM objetos WHERE id_usuario = $1 AND activo = TRUE AND estado = 'encontrado'",
+      [id],
+    );
+    res.json({
+      ...usuario.rows[0],
+      totalObjetos: parseInt(totalObjetos.rows[0].count),
+      encontrados: parseInt(encontrados.rows[0].count),
+    });
+  } catch (error) {
+    console.error("Error al obtener perfil:", error);
+    res.status(500).json({ error: "Error al obtener perfil" });
+  }
+});
+
 // OBTENER UNO ESPECÍFICO
 router.get("/:id", autenticacion, async (req, res) => {
   try {

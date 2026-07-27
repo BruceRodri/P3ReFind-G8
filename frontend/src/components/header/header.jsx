@@ -1,5 +1,6 @@
 import { Navbar, Container, Nav } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import { NotificationPanel } from "../notification-panel";
 import styles from "./header.module.css";
 
 export const Header = () => {
@@ -10,27 +11,30 @@ export const Header = () => {
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("usuario");
-        navigate("/login");
+        navigate("/");
     };
 
     return (
         <Navbar bg="dark" variant="dark" expand="lg" className={styles.navbar}>
             <Container>
-                <Navbar.Brand as={Link} to="/" className={styles.brand}>CampusLost+</Navbar.Brand>
+                <Navbar.Brand as={Link} to="/" className={styles.brand}>ReFind</Navbar.Brand>
                 <Navbar.Toggle aria-controls="main-navigation" />
                 <Navbar.Collapse id="main-navigation">
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/">Inicio</Nav.Link>
                         {token && <>
-                            <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
                             <Nav.Link as={Link} to="/mis-objetos">Mis objetos</Nav.Link>
-                            <Nav.Link as={Link} to="/favoritos">Favoritos</Nav.Link>
+                            <Nav.Link as={Link} to="/mensajes">Mensajes</Nav.Link>
+                            {usuario?.rol === "ADMIN" && (
+                                <Nav.Link as={Link} to="/admin">Admin</Nav.Link>
+                            )}
                         </>}
                     </Nav>
-                    <Nav>
+                    <Nav className="align-items-center">
                         {token ? (
                             <div className={styles.userArea}>
-                                <Link to="/dashboard" className={styles.user}>
+                                <NotificationPanel />
+                                <Link to={`/perfil/${usuario?.id}`} className={styles.user}>
                                     <span className={styles.avatar}>
                                         {usuario?.nombre?.charAt(0).toUpperCase() || "U"}
                                     </span>

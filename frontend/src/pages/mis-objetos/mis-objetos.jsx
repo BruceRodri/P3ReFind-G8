@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Container, Row, Col, Button, Modal, Form } from "react-bootstrap";
-import { getObjetos, crearObjeto, eliminarObjeto } from "../../services/objetos_services";
+import { getMisObjetos, crearObjeto, eliminarObjeto } from "../../services/objetos_services";
 import { getCategorias } from "../../services/categorias_services";
+import { subirImagen } from "../../services/upload_services";
 import { LostCard, FoundCard } from "../../components";
 import styles from "./mis-objetos.module.css";
 
@@ -9,6 +10,8 @@ export const MisObjetosPage = () => {
     const [objetos, setObjetos] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
+    const [subiendo, setSubiendo] = useState(false);
     const [nuevoObjeto, setNuevoObjeto] = useState({
         titulo: "",
         descripcion: "",
@@ -23,9 +26,23 @@ export const MisObjetosPage = () => {
     }, []);
 
     const cargarDatos = async () => {
-        const [objData, catData] = await Promise.all([getObjetos(), getCategorias()]);
+        const [objData, catData] = await Promise.all([getMisObjetos(), getCategorias()]);
         setObjetos(objData);
         setCategorias(catData);
+    };
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setSubiendo(true);
+        try {
+            const data = await subirImagen(file);
+            setNuevoObjeto((prev) => ({ ...prev, imagen: data.url }));
+        } catch (error) {
+            console.error("Error al subir imagen:", error);
+        } finally {
+            setSubiendo(false);
+        }
     };
 
     const handleCrear = async (e) => {
@@ -43,8 +60,9 @@ export const MisObjetosPage = () => {
         cargarDatos();
     };
 
-    const handleEliminar = async (id) => {
-        await eliminarObjeto(id);
+    const handleEliminar = async () => {
+        await eliminarObjeto(showDeleteConfirm);
+        setShowDeleteConfirm(null);
         cargarDatos();
     };
 
@@ -59,11 +77,11 @@ export const MisObjetosPage = () => {
                 {objetos.map((obj) => (
                     <Col key={obj.id} md={4} sm={6} xs={12}>
                         {obj.estado === "perdido" ? (
-                            <LostCard objeto={obj} onVerDetalle={() => { }} />
+                            <LostCard objeto={obj} onVerDetalle={() => { }} onEncontrado={cargarDatos} />
                         ) : (
                             <FoundCard objeto={obj} onVerDetalle={() => { }} />
                         )}
-                        <Button variant="danger" size="sm" onClick={() => handleEliminar(obj.id)}>
+                        <Button variant="danger" size="sm" onClick={() => setShowDeleteConfirm(obj.id)}>
                             Eliminar
                         </Button>
                     </Col>
@@ -94,16 +112,6 @@ export const MisObjetosPage = () => {
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Estado</Form.Label>
-                            <Form.Select
-                                value={nuevoObjeto.estado}
-                                onChange={(e) => setNuevoObjeto({ ...nuevoObjeto, estado: e.target.value })}
-                            >
-                                <option value="perdido">Perdido</option>
-                                <option value="encontrado">Encontrado</option>
-                            </Form.Select>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
                             <Form.Label>Ubicación</Form.Label>
                             <Form.Control
                                 type="text"
@@ -112,12 +120,17 @@ export const MisObjetosPage = () => {
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>URL de Imagen</Form.Label>
+                            <Form.Label>Imagen</Form.Label>
                             <Form.Control
-                                type="text"
-                                value={nuevoObjeto.imagen}
-                                onChange={(e) => setNuevoObjeto({ ...nuevoObjeto, imagen: e.target.value })}
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
                             />
+                            {nuevoObjeto.imagen && (
+                                <div className="mt-2">
+                                    <img src={nuevoObjeto.imagen} alt="Preview" style={{ maxHeight: 100 }} />
+                                </div>
+                            )}
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Categoría</Form.Label>
@@ -134,11 +147,22 @@ export const MisObjetosPage = () => {
                                 ))}
                             </Form.Select>
                         </Form.Group>
-                        <Button variant="primary" type="submit">
-                            Crear Objeto
+                        <Button variant="primary" type="submit" disabled={subiendo}>
+                            {subiendo ? "Subiendo imagen..." : "Crear Objeto"}
                         </Button>
                     </Form>
                 </Modal.Body>
+            </Modal>
+
+            <Modal show={!!showDeleteConfirm} onHide={() => setShowDeleteConfirm(null)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmar eliminación</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>¿Seguro que deseas eliminar este objeto? Esta acción no se puede deshacer.</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowDeleteConfirm(null)}>Cancelar</Button>
+                    <Button variant="danger" onClick={handleEliminar}>Eliminar</Button>
+                </Modal.Footer>
             </Modal>
         </Container>
     );

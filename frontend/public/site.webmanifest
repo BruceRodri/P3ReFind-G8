@@ -1,15 +1,15 @@
 {
-  "name": "Your Website",
+  "name": "ReFind",
   "icons": [
     {
-      "src": "/favicon-128x128.png",
+      "src": "/favicon-128x128.jpeg",
       "sizes": "128x128",
-      "type": "image/png"
+      "type": "image/jpeg"
     },
     {
-      "src": "/favicon-512x512.png",
+      "src": "/favicon-512x512.jpeg",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/jpeg"
     }
   ]
 }

@@ -1,10 +1,40 @@
 import api from "../api/axios";
 
-//OBTENER OBJETOS
-export const getObjetos = async () => {
+//OBTENER MIS OBJETOS
+export const getMisObjetos = async () => {
   try {
-    const response = await api.get("/objetos");
+    const response = await api.get("/objetos/mis-objetos");
     return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+//MARCAR COMO ENCONTRADO
+export const marcarEncontrado = async (id, mensaje) => {
+  try {
+    const response = await api.put(`/objetos/${id}/encontrado`, { mensaje });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+//OBTENER OBJETOS CON PAGINACIÓN
+export const getObjetos = async (page = 1, limit = 12) => {
+  try {
+    const response = await api.get(`/objetos?page=${page}&limit=${limit}`);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+//TOTAL DE OBJETOS
+export const getTotalObjetos = async () => {
+  try {
+    const response = await api.get("/objetos/total");
+    return response.data.total;
   } catch (error) {
     console.error(error);
     throw error;
@@ -45,6 +75,16 @@ export const crearObjeto = async (objeto) => {
 export const actualizarObjeto = async (id, objeto) => {
   try {
     const response = await api.put(`/objetos/${id}`, objeto);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+//ESTADÍSTICAS
+export const getEstadisticas = async () => {
+  try {
+    const response = await api.get("/objetos/estadisticas");
     return response.data;
   } catch (error) {
     console.error(error);

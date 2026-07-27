@@ -4,8 +4,8 @@ const conexion = require("../database/conexion");
 const autenticacion = require("../middlewares/autenticacion");
 const autorizacion = require("../middlewares/autorizacion");
 
-// OBTENER TODAS LAS CATEGORIAS
-router.get("/", autenticacion, async (req, res) => {
+// OBTENER TODAS LAS CATEGORIAS — público
+router.get("/", async (req, res) => {
   try {
     const resultado = await conexion.query("SELECT * FROM categorias");
     res.status(200).json(resultado.rows);

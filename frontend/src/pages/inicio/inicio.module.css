@@ -18,7 +18,7 @@
 .primaryButton:hover { background: #5b21b6; color: #fff; transform: translateY(-2px); }
 .secondaryButton:hover { color: #6d28d9; border-color: #8b5cf6; }
 .trust { display: flex; flex-wrap: wrap; gap: 1.25rem; color: #667085; font-size: .86rem; }
-.trust span::first-letter { color: #6d28d9; }
+
 .heroVisual { position: relative; display: grid; place-items: center; min-height: 390px; }
 .heroVisual > img { position: relative; z-index: 2; width: min(75%, 330px); filter: drop-shadow(0 28px 25px rgba(55, 48, 163, .2)); }
 .imageGlow { position: absolute; width: 330px; height: 330px; border-radius: 50%; background: #ddd6fe; filter: blur(3px); opacity: .55; }
@@ -46,8 +46,50 @@
 .resultsHeader h2 { margin: .35rem 0 0; font-size: 1.8rem; }.resultsHeader > strong { color: #748094; font-size: .85rem; }
 .empty { padding: 4rem 1rem; border: 1px dashed #d8d2e4; border-radius: 18px; text-align: center; background: #fff; }
 .empty > span { color: #7c3aed; font-size: 2.5rem; }.empty h3 { margin-top: .5rem; }.empty p { color: #748094; }
+.stats {
+  padding: 3rem 0;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+}
+.statCard {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  transition: transform 0.2s;
+}
+.statCard:hover {
+  transform: translateY(-2px);
+}
+.statCard h3 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #6d28d9;
+  margin-bottom: 0;
+}
+.statCard p {
+  color: #6b7280;
+  font-size: 0.85rem;
+  margin: 0.25rem 0 0;
+}
+.filters {
+  margin-bottom: 2rem;
+}
+.filterRow {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+.filterSelect {
+  width: auto;
+  min-width: 200px;
+}
 @media (max-width: 991px) {
   .hero { padding: 4rem 0; }.heroVisual { margin-top: 2rem; }.steps { grid-template-columns: 1fr; }
+  .filterRow { flex-direction: column; align-items: center; }
+  .filterSelect { width: 100%; max-width: 300px; }
 }
 @media (max-width: 576px) {
   .hero { padding: 3rem 0; }.hero h1 { font-size: 2.55rem; }.heroVisual { min-height: 320px; }
