@@ -196,13 +196,14 @@ router.put("/:id", autenticacion, async (req, res) => {
     const { id } = req.params;
     const { titulo, descripcion, estado, ubicacion, imagen, id_categoria } =
       req.body;
+    const id_usuario = req.usuario.id;
     const resultado = await conexion.query(
       `
       UPDATE objetos 
       SET titulo = $1, descripcion = $2, estado = $3, ubicacion = $4, imagen = $5, id_categoria = $6
-      WHERE id = $7 AND activo = TRUE RETURNING *
+      WHERE id = $7 AND id_usuario = $8 AND activo = TRUE RETURNING *
     `,
-      [titulo, descripcion, estado, ubicacion, imagen, id_categoria, id],
+      [titulo, descripcion, estado, ubicacion, imagen, id_categoria, id, id_usuario],
     );
     if (resultado.rows.length === 0) {
       return res.status(404).json({ error: "Objeto no encontrado" });
