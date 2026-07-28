@@ -122,7 +122,6 @@ export const MisObjetosPage = () => {
                 </div>
             ) : objetos.length === 0 ? (
                 <div className={styles.empty}>
-                    <span className={styles.emptyIcon}>&#128269;</span>
                     <h3>Aun no tienes objetos publicados</h3>
                     <p>Comienza publicando un objeto perdido o encontrado para que la comunidad te ayude.</p>
                 </div>

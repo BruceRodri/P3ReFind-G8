@@ -116,7 +116,7 @@ export const InicioPage = () => {
                             <h1>¿Perdiste algo en el campus? <em>Podemos encontrarlo juntos.</em></h1>
                             <p>ReFind conecta a estudiantes que perdieron un objeto con quienes lo encontraron. Publica, busca y ayuda a que cada pertenencia vuelva a su dueño.</p>
                             <div className={styles.actions}>
-                                <Link to="/registro" className={styles.primaryButton}>Publicar un objeto</Link>
+                                <Link to={localStorage.getItem("token") ? "/mis-objetos" : "/registro"} className={styles.primaryButton}>Publicar un objeto</Link>
                                 <a href="#publicaciones" className={styles.secondaryButton}>Explorar publicaciones</a>
                             </div>
                             <div className={styles.trust}><span>Fácil de usar</span><span>Comunidad segura</span><span>Totalmente gratis</span></div>
