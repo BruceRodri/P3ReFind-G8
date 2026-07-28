@@ -18,7 +18,7 @@ export const Header = () => {
         <Navbar bg="dark" variant="dark" expand="lg" className={styles.navbar}>
             <Container>
                 <Navbar.Brand as={Link} to="/" className={styles.brand}>
-                    <img src="/favicon-128x128.jpeg" alt="Logo de ReFind" className={styles.logo}/>
+                    <img src="/favicon-128x128.png" alt="Logo de ReFind" className={styles.logo}/>
                     <span>ReFind</span>
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="main-navigation" />

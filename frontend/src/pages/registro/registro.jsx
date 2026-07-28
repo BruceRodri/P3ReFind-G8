@@ -37,7 +37,7 @@ export const RegistroPage = () => {
             <Card className={styles.card}>
                 <Card.Body className={styles.cardBody}>
                     <div className={styles.logoWrapper}>
-                        <img src="/favicon-128x128.jpeg" alt="ReFind" className={styles.logo} />
+                        <img src="/favicon-128x128.png" alt="ReFind" className={styles.logo} />
                     </div>
                     <h2 className={styles.title}>Crear una cuenta</h2>
                     <p className={styles.subtitle}>Únete a ReFind y ayuda a conectar objetos perdidos con sus dueños</p>

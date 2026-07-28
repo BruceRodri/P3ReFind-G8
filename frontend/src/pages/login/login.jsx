@@ -38,7 +38,7 @@ export const LoginPage = () => {
             <Card className={styles.card}>
                 <Card.Body className={styles.cardBody}>
                     <div className={styles.logoWrapper}>
-                        <img src="/favicon-128x128.jpeg" alt="ReFind" className={styles.logo} />
+                        <img src="/favicon-128x128.png" alt="ReFind" className={styles.logo} />
                     </div>
                     <h2 className={styles.title}>Iniciar sesión</h2>
                     <p className={styles.subtitle}>Bienvenido de nuevo a ReFind</p>

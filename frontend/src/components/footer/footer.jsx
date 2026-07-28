@@ -7,7 +7,7 @@ export const Footer = () => {
             <Container>
                 <div className={styles.footerInner}>
                     <div className={styles.footerBrand}>
-                        <img src="/favicon-128x128.jpeg" alt="ReFind" />
+                        <img src="/favicon-128x128.png" alt="ReFind" />
                         ReFind
                     </div>
                     <p className={styles.footerText}>
